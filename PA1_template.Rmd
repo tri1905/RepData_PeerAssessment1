@@ -9,6 +9,7 @@ output:
 
 ```{r, echo=TRUE}
 library(tidyverse)
+library(ggplot2)
 data<-read.csv("activity.csv")
 summary(data)
 data$date <- as.Date(data$date, format="%Y-%m-%d") # chuyển sang cột date sang dạng date
@@ -39,17 +40,13 @@ median_steps <- median(sum_steps_date$sum_steps, na.rm = TRUE)
 # Báo cáo kết quả ra màn hình (Console)
 print(paste("Mean (Trung bình):", mean_steps))
 print(paste("Median (Trung vị):", median_steps))
-
-## What is the average daily activity pattern?
-
-
 ```
 
 ## What is the average daily activity pattern?
 
 ```{r,echo="TRUE"}
 
-library(ggplot2)
+
 #tạo bảng data mới để xử lý, trong đó tính trung bình số steps theo từng 5 phút một
 avg_steps_interval <- data %>%
   group_by(interval) %>% 
@@ -94,5 +91,60 @@ data_final <- data %>%
 
 # Kiểm tra xem còn dòng NA nào không
 sum(is.na(data_final$steps))
+
+#tạo bảng data mới để xử lý
+sum_steps_date_final <- data_final %>%
+  group_by(date) %>% 
+  summarize(sum_steps = sum(steps, na.rm = TRUE)) 
+#vẽ biểu đồ
+ggplot(sum_steps_date_final, aes(x = sum_steps)) +
+  geom_histogram(fill = "steelblue", color = "white", bins = 15) +
+  labs(
+    title = "Histogram of Total Steps per Day",
+    x = "Total Steps",
+    y = "Frequency"
+  ) +
+  theme_minimal() 
+
+# Tính toán giá trị
+mean_steps <- mean(sum_steps_date_final$sum_steps, na.rm = TRUE)
+median_steps <- median(sum_steps_date_final$sum_steps, na.rm = TRUE)
+
+# Báo cáo kết quả ra màn hình (Console)
+print(paste("Mean (Trung bình):", mean_steps))
+print(paste("Median (Trung vị):", median_steps))
 ```
 ## Are there differences in activity patterns between weekdays and weekends?
+```{r,echo="TRUE"}
+#Tạo cột phân loại (day_type)
+du_lieu_cuoi_cung <- data_final %>%
+  mutate(
+    # Lấy tên thứ (Lưu ý: Nếu R của bạn dùng tiếng Việt, hãy đổi "Saturday", "Sunday" thành "thứ bảy", "chủ nhật")
+    ten_thu = weekdays(date),
+    
+    # Phân loại thành weekend hoặc weekday
+    day_type = ifelse(ten_thu %in% c("Saturday", "Sunday"), "weekend", "weekday"),
+    
+    # Ép kiểu sang dạng Factor theo yêu cầu
+    day_type = as.factor(day_type)
+  )
+
+#Tính trung bình và vẽ biểu đồ (Panel plot)
+# Tính trung bình theo 2 nhóm: interval và day_type
+trung_binh_kieu_ngay <- du_lieu_cuoi_cung %>%
+  group_by(interval, day_type) %>%
+  summarize(avg_steps = mean(steps), .groups = "drop")
+
+# Vẽ biểu đồ với facet_wrap để chia làm 2 khung hình
+ggplot(trung_binh_kieu_ngay, aes(x = interval, y = avg_steps, color = day_type)) +
+  geom_line(linewidth = 1) +
+  facet_wrap(~day_type, nrow = 2) + # Lệnh này tạo ra Panel Plot (2 biểu đồ xếp chồng)
+  labs(
+    title = "Average Steps: Weekday vs Weekend",
+    x = "5-Minute Interval",
+    y = "Average Number of Steps"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none") # Ẩn chú giải vì tiêu đề khung đã ghi rõ
+```
+
