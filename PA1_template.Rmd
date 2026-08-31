@@ -5,21 +5,94 @@ output:
     keep_md: true
 ---
 
-
 ## Loading and preprocessing the data
 
-
+```{r, echo=TRUE}
+library(tidyverse)
+data<-read.csv("activity.csv")
+summary(data)
+data$date <- as.Date(data$date, format="%Y-%m-%d") # chuyển sang cột date sang dạng date
+```
 
 ## What is mean total number of steps taken per day?
 
+```{r,echo=TRUE}
+library(ggplot2)
+#tạo bảng data mới để xử lý
+sum_steps_date <- data %>%
+  group_by(date) %>% 
+  summarize(sum_steps = sum(steps, na.rm = TRUE)) 
+#vẽ biểu đồ
+ggplot(sum_steps_date, aes(x = sum_steps)) +
+  geom_histogram(fill = "steelblue", color = "white", bins = 15) +
+  labs(
+    title = "Histogram of Total Steps per Day",
+    x = "Total Steps",
+    y = "Frequency"
+  ) +
+  theme_minimal() 
 
+# Tính toán giá trị
+mean_steps <- mean(sum_steps_date$sum_steps, na.rm = TRUE)
+median_steps <- median(sum_steps_date$sum_steps, na.rm = TRUE)
+
+# Báo cáo kết quả ra màn hình (Console)
+print(paste("Mean (Trung bình):", mean_steps))
+print(paste("Median (Trung vị):", median_steps))
 
 ## What is the average daily activity pattern?
 
 
+```
 
-## Imputing missing values
+## What is the average daily activity pattern?
 
+```{r,echo="TRUE"}
 
+library(ggplot2)
+#tạo bảng data mới để xử lý, trong đó tính trung bình số steps theo từng 5 phút một
+avg_steps_interval <- data %>%
+  group_by(interval) %>% 
+  summarize(avg_steps = mean(steps, na.rm = TRUE))
+#vẽ biểu đồ đườg với trục x là mỗi 5 phút, y là trung bình số bước
+plot(
+  x = avg_steps_interval$interval, 
+  y = avg_steps_interval$avg_steps, 
+  type = "l",                            # Chữ "l" (line) để vẽ biểu đồ đường
+  col = "blue",                          # Màu sắc của đường
+  lwd = 2,                               # Độ dày của đường
+  main = "Average Steps per 5-Minute Interval",
+  xlab = "5-Minute Interval",
+  ylab = "Average Number of Steps"
+)
+#tìm số bước lớn nhất trong khoảng thời gian 5 phút
+khoang_thoi_gian_max <- avg_steps_interval %>%
+  filter(avg_steps == max(avg_steps))
 
+# In kết quả ra màn hình
+print(khoang_thoi_gian_max)
+
+```
+
+##Imputing missing values
+```{r,echo="TRUE"}
+# Đếm tổng số dòng bị khuyết dữ liệu
+tong_so_hang_na <- sum(!complete.cases(data))
+
+print(tong_so_hang_na)
+# tạo bảng mới bằng cách điền giá trị trung bình trong khoảng thời gian 5 phút
+
+data_final <- data %>%
+  # 1. Ghép cột trung bình (avg_steps) vào bảng gốc dựa trên mã interval
+  left_join(avg_steps_interval, by = "interval") %>%
+  
+  # 2. Lấp NA: Lấy giá trị cột steps, nếu steps là NA thì lấy avg_steps đắp vào
+  mutate(steps = coalesce(steps, avg_steps)) %>%
+  
+  # 3. Dọn dẹp: Xóa cột avg_steps đi để bảng mới y hệt cấu trúc bảng gốc (3 cột)
+  select(-avg_steps)
+
+# Kiểm tra xem còn dòng NA nào không
+sum(is.na(data_final$steps))
+```
 ## Are there differences in activity patterns between weekdays and weekends?
