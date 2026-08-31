@@ -8,7 +8,6 @@ output:
 
 ## Loading and preprocessing the data
 
-
 ``` r
 library(tidyverse)
 library(ggplot2)
@@ -16,7 +15,7 @@ data<-read.csv("activity.csv")
 summary(data)
 ```
 
-```
+```         
 ##      steps            date              interval     
 ##  Min.   :  0.00   Length:17568       Min.   :   0.0  
 ##  1st Qu.:  0.00   Class :character   1st Qu.: 588.8  
@@ -32,7 +31,6 @@ data$date <- as.Date(data$date, format="%Y-%m-%d") # chuyển sang cột date sa
 ```
 
 ## What is mean total number of steps taken per day?
-
 
 ``` r
 library(ggplot2)
@@ -62,7 +60,7 @@ median_steps <- median(sum_steps_date$sum_steps, na.rm = TRUE)
 print(paste("Mean (Trung bình):", mean_steps))
 ```
 
-```
+```         
 ## [1] "Mean (Trung bình): 9354.22950819672"
 ```
 
@@ -70,12 +68,11 @@ print(paste("Mean (Trung bình):", mean_steps))
 print(paste("Median (Trung vị):", median_steps))
 ```
 
-```
+```         
 ## [1] "Median (Trung vị): 10395"
 ```
 
 ## What is the average daily activity pattern?
-
 
 ``` r
 #tạo bảng data mới để xử lý, trong đó tính trung bình số steps theo từng 5 phút một
@@ -106,7 +103,7 @@ khoang_thoi_gian_max <- avg_steps_interval %>%
 print(khoang_thoi_gian_max)
 ```
 
-```
+```         
 ## # A tibble: 1 × 2
 ##   interval avg_steps
 ##      <int>     <dbl>
@@ -122,7 +119,7 @@ tong_so_hang_na <- sum(!complete.cases(data))
 print(tong_so_hang_na)
 ```
 
-```
+```         
 ## [1] 2304
 ```
 
@@ -143,7 +140,7 @@ data_final <- data %>%
 sum(is.na(data_final$steps))
 ```
 
-```
+```         
 ## [1] 0
 ```
 
@@ -174,7 +171,7 @@ median_steps <- median(sum_steps_date_final$sum_steps, na.rm = TRUE)
 print(paste("Mean (Trung bình):", mean_steps))
 ```
 
-```
+```         
 ## [1] "Mean (Trung bình): 10766.1886792453"
 ```
 
@@ -182,9 +179,10 @@ print(paste("Mean (Trung bình):", mean_steps))
 print(paste("Median (Trung vị):", median_steps))
 ```
 
-```
+```         
 ## [1] "Median (Trung vị): 10766.1886792453"
 ```
+
 ## Are there differences in activity patterns between weekdays and weekends?
 
 ``` r
@@ -221,4 +219,3 @@ ggplot(trung_binh_kieu_ngay, aes(x = interval, y = avg_steps, color = day_type))
 ```
 
 ![plot of chunk unnamed-chunk-23](figure/unnamed-chunk-23-1.png)
-
