@@ -1,6 +1,7 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
+title: 'Reproducible Research: Peer Assessment 1'
+output:
+  pdf_document: default
   html_document:
     keep_md: true
 ---
@@ -10,22 +11,6 @@ output:
 
 ``` r
 library(tidyverse)
-```
-
-```
-## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-## ✔ dplyr     1.2.1     ✔ readr     2.2.0
-## ✔ forcats   1.0.1     ✔ stringr   1.6.0
-## ✔ ggplot2   4.0.3     ✔ tibble    3.3.1
-## ✔ lubridate 1.9.5     ✔ tidyr     1.3.2
-## ✔ purrr     1.2.2     
-## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()
-## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
-```
-
-``` r
 library(ggplot2)
 data<-read.csv("activity.csv")
 summary(data)
@@ -66,7 +51,7 @@ ggplot(sum_steps_date, aes(x = sum_steps)) +
   theme_minimal() 
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20-1.png)
 
 ``` r
 # Tính toán giá trị
@@ -110,7 +95,7 @@ plot(
 )
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-21-1.png)
 
 ``` r
 #tìm số bước lớn nhất trong khoảng thời gian 5 phút
@@ -178,7 +163,7 @@ ggplot(sum_steps_date_final, aes(x = sum_steps)) +
   theme_minimal() 
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-22-1.png)
 
 ``` r
 # Tính toán giá trị
@@ -235,5 +220,5 @@ ggplot(trung_binh_kieu_ngay, aes(x = interval, y = avg_steps, color = day_type))
   theme(legend.position = "none") # Ẩn chú giải vì tiêu đề khung đã ghi rõ
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+![plot of chunk unnamed-chunk-23](figure/unnamed-chunk-23-1.png)
 
